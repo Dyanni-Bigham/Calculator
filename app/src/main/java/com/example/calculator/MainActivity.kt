@@ -3,10 +3,15 @@ package com.example.calculator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.calculator.databinding.ActivityMainBinding
+import kotlin.math.ceil
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val runningString = StringBuilder()
+    private var firstNumber: String = ""
+    private var secondNumber: String = ""
+    private var operator: String = ""
+    private var ans: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,16 +24,15 @@ class MainActivity : AppCompatActivity() {
         // set all of the buttons to an action
         binding.clearButton.setOnClickListener { clearButtonAction() }
         binding.squareRootButton.setOnClickListener { squareButtonAction() }
-        binding.decimalButton.setOnClickListener { decimalButtonAction() }
         binding.divideButton.setOnClickListener { divideButtonAction() }
         binding.multiplyButton.setOnClickListener { multiplyButtonAction() }
         binding.addButton.setOnClickListener { addButtonAction() }
         binding.subButton.setOnClickListener { subButtonAction() }
-        binding.equalButton.setOnClickListener { calculate() }
+        binding.equalButton.setOnClickListener { displayCalculation()} // change later
         binding.nineButton.setOnClickListener { nineButtonAction() }
         binding.eightButton.setOnClickListener { eightButtonAction() }
         binding.sevenButton.setOnClickListener { sevenButtonAction() }
-        binding.sixButton.setOnClickListener { sixBittonAction() }
+        binding.sixButton.setOnClickListener { sixButtonAction() }
         binding.fiveButton.setOnClickListener { fiveButtonAction() }
         binding.fourButton.setOnClickListener { fourButtonAction() }
         binding.threeButton.setOnClickListener { threeButtonAction() }
@@ -38,81 +42,155 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun zeroButtonAction() {
-        binding.viewSpace.text = "zero pressed"
+        binding.viewSpace.append("0")
     }
 
     private fun oneButtonAction() {
-        binding.viewSpace.text = "one button"
+        binding.viewSpace.append("1")
     }
 
     private fun twoButtonAction() {
-        binding.viewSpace.text = "two pressed"
+        binding.viewSpace.append("2")
     }
 
     private fun threeButtonAction() {
-        binding.viewSpace.text = "three pressed"
+        binding.viewSpace.append("3")
     }
 
     private fun fourButtonAction() {
-        binding.viewSpace.text = "four prewssed"
+        binding.viewSpace.append("4")
     }
 
     private fun fiveButtonAction() {
-        binding.viewSpace.text = "five pressed"
+        binding.viewSpace.append("5")
     }
 
-    private fun sixBittonAction() {
-        binding.viewSpace.text = "six pressed"
+    private fun sixButtonAction() {
+        binding.viewSpace.append("6")
     }
 
     private fun eightButtonAction() {
-        binding.viewSpace.text = "eight pressed"
+        binding.viewSpace.append("8")
     }
 
     private fun nineButtonAction() {
-        binding.viewSpace.text = "nine pressed"
+        binding.viewSpace.append("9")
     }
 
     private fun subButtonAction() {
-        binding.viewSpace.text = "subtract pressed"
+        operator = "-"
+        if (firstNumber.isEmpty()) {
+            firstNumber = binding.viewSpace.text.toString()
+        }
+        binding.viewSpace.text = ""
     }
 
     private fun addButtonAction() {
-        binding.viewSpace.text = "add pressed"
+        operator = "+"
+        if (firstNumber.isEmpty()) {
+            firstNumber = binding.viewSpace.text.toString()
+        }
+        binding.viewSpace.text = ""
     }
 
     private fun multiplyButtonAction() {
-        binding.viewSpace.text = "mulitply pressed"
+        operator = "*"
+        if (firstNumber.isEmpty()) {
+            firstNumber = binding.viewSpace.text.toString()
+        }
+        binding.viewSpace.text = ""
     }
 
     private fun sevenButtonAction() {
-        binding.viewSpace.text ="seven pressed"
+        binding.viewSpace.append("7")
     }
 
     private fun divideButtonAction() {
-        binding.viewSpace.text = "divide pressed"
+        operator = "/"
+        if (firstNumber.isEmpty()) {
+            firstNumber = binding.viewSpace.text.toString()
+        }
+        binding.viewSpace.text = ""
     }
 
     private fun squareButtonAction() {
-        binding.viewSpace.text = "Squared pressed"
+        operator = "sqrt"
+        firstNumber = binding.viewSpace.text.toString()
+        binding.viewSpace.text = ""
     }
 
     private fun clearButtonAction() {
-        binding.viewSpace.text = "Clear pressed"
+        firstNumber = ""
+        secondNumber = ""
+        operator = ""
+        binding.viewSpace.text = ""
     }
 
-    private fun decimalButtonAction() {
-        binding.viewSpace.text = "decimal pressed"
-    }
-
-    private fun equalButtonAction() {
-        // Call the displayCalculation function when button pressed
-    }
     private fun displayCalculation() {
-        TODO("Implement the text view to have the calculation")
+        // testing to see if the running string contains all input buttons
+        binding.viewSpace.text = calculate()
     }
 
-    private fun calculate() {
+    // checks which operator was called then calls the respective function
 
+    private fun calculate(): String {
+        if (!(firstNumber.isEmpty()) && operator == "sqrt") {
+            ans = sq(firstNumber.toDouble()).toInt()
+            //return "sqrt called"
+        }
+        if (firstNumber.isEmpty() && secondNumber.isEmpty()) {
+            return "Please enter values"
+        }
+
+        if (secondNumber.isEmpty()) {
+            secondNumber = binding.viewSpace.text.toString()
+        }
+
+        if (operator == "+") {
+            ans = add(firstNumber.toInt(), secondNumber.toInt())
+        }
+
+        else if (operator == "-") {
+            ans = sub(firstNumber.toInt(), secondNumber.toInt())
+        }
+        else if (operator == "*") {
+            ans = multiply(firstNumber.toInt(),secondNumber.toInt())
+        }
+        else if (operator == "/") {
+            ans = divide(firstNumber.toInt(),secondNumber.toInt())
+
+            if (ans == -1) {
+                return "Cannot divide by 0"
+            }
+        }
+
+        return ans.toString()
+    }
+
+    private fun add(numOne: Int, numTwo: Int): Int {
+        return numOne + numTwo
+    }
+
+    private fun sub(numOne: Int, numTwo: Int): Int {
+        return numOne - numTwo
+    }
+
+    private fun multiply(numOne: Int, numTwo: Int): Int {
+        return numOne * numTwo
+    }
+
+    private fun divide(numOne: Int, numTwo: Int): Int {
+        if (numTwo == 0) {
+            return -1
+        }
+        else {
+            return numOne / numTwo
+        }
+    }
+
+    private fun sq(numOne: Double): Double {
+        // finish the logic for square root
+        return sqrt(numOne)
+        //return 444.4
     }
 }
